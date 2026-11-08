@@ -1,0 +1,46 @@
+name: ROS 2 project static checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  python-and-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test-only dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pyyaml
+
+      - name: Compile Python sources
+        run: python -m compileall -q src scripts tests
+
+      - name: Run unit and resource tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Check shell syntax
+        run: |
+          for file in scripts/*.sh; do
+            bash -n "$file"
+          done
+
+      - name: Check ROS 1 runtime APIs are absent
+        run: |
+          if grep -R -n -E '(^|[[:space:]])(import rospy|from rospy|catkin_make|roslaunch|rosrun)([[:space:]]|$)' src; then
+            echo "ROS 1 API found in ROS 2 source tree" >&2
+            exit 1
+          fi
