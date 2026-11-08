@@ -17,7 +17,7 @@ Visualization Manager:
     - Class: rviz_default_plugins/MarkerArray
       Name: CBF Markers
       Enabled: true
-      Marker Topic:
+      Topic:
         Value: /cbf_visualization/markers
         Reliability Policy: Reliable
         Durability Policy: Volatile
@@ -28,7 +28,7 @@ Visualization Manager:
     - Class: rviz_default_plugins/Image
       Name: Depth Image
       Enabled: true
-      Image Topic:
+      Topic:
         Value: /camera/depth/image_raw
         Reliability Policy: Best Effort
         Durability Policy: Volatile
