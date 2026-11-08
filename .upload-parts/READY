@@ -1,1 +1,1 @@
-All 16 verified base64 chunks are present. Trigger validated extraction.
+Verified ROS 2 source bundle. Trigger clean extraction; omit extra workflow file due to Actions token scope.
