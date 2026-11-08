@@ -4,6 +4,7 @@ import rclpy
 from geometry_msgs.msg import Point
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from visualization_msgs.msg import Marker, MarkerArray
 from safe_obstacle_avoidance_msgs.msg import SafeSetEllipsoidsConfig
 
@@ -18,9 +19,9 @@ class CBFVisualization(Node):
         self.odom = None
         self.safe = None
         self.pub = self.create_publisher(MarkerArray, self.get_parameter("marker_topic").value, 10)
-        self.create_subscription(Odometry, "/odom", self.on_odom, 10)
+        self.create_subscription(Odometry, "/odom", self.on_odom, qos_profile_sensor_data)
         self.create_subscription(SafeSetEllipsoidsConfig, "/safe_set_config", self.on_safe, 10)
-        self.get_logger().info("Publishing robot, demo obstacles and CBF ellipses for RViz2")
+        self.get_logger().info("Publishing robot, demo obstacles and CBF ellipses for RViz2; odom subscription uses sensor-data BEST_EFFORT QoS")
 
     def marker(self, frame, stamp, mid, kind):
         m=Marker()
