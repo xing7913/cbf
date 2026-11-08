@@ -4,7 +4,7 @@
 
 这是 `chetanreddyn/safe-obstacle-avoidance` 的原生 ROS 2 复现工程，目标是把项目中的**深度图 → 椭圆安全集 → CBF-QP → 速度过滤**闭环在 ROS 2 + Gazebo Sim 中跑通。
 
-它不是一份只讲迁移方法的教程：仓库直接包含 ROS 2 消息包、`rclpy` 节点、CBF-QP 求解器、Gazebo Sim SDF 场景、`ros_gz_bridge` 配置、一键启动脚本、实验记录与分析工具、15 项单元/资源静态检查和 GitHub Actions CI。**不包含旧版 ROS 节点，不使用 `rospy`、`catkin`、`rosrun` 或 `roslaunch`。**
+仓库包含 ROS 2 消息包、`rclpy` 节点、CBF-QP 求解器、Gazebo Sim SDF 场景、`ros_gz_bridge` 配置、一键启动脚本、实验记录与分析工具，以及 Python 几何/QP 和资源静态测试。**不包含 ROS 1 节点，不使用 `rospy`、`catkin`、`rosrun` 或 `roslaunch`。**
 
 > **Gazebo 安装约定：** 默认你的 Ubuntu 虚拟机已经安装并能启动 Gazebo Jetty。安装脚本只安装 ROS 侧的 `ros_gz_bridge` 等依赖，不安装、不卸载、不升级 Gazebo，也不会安装 `ros_gz_sim`。
 >
@@ -49,7 +49,7 @@ source /opt/ros/lyrical/setup.bash
 
 ```bash
 git clone https://github.com/xing7913/cbf.git
-cd safe-obstacle-avoidance-ros2
+cd cbf
 ```
 
 ## 2. 安装依赖（不会安装 Gazebo）
@@ -59,7 +59,7 @@ cd safe-obstacle-avoidance-ros2
 ./scripts/install_ros_deps.sh
 ```
 
-安装脚本需要的 ROS 包包括 `ros_gz_bridge`、`cv_bridge`、键盘遥控、NumPy、OpenCV、colcon 和 Matplotlib。它**不会**执行 `apt install ros-lyrical-ros-gz` 或安装 `ros_gz_sim`，避免替你安装/替换 Gazebo 本体。
+安装脚本需要的 ROS 包包括 `ros_gz_bridge`、`cv_bridge`、键盘遥控、NumPy、OpenCV、colcon 和 Matplotlib。它**不会**安装 Gazebo 本体，也不会安装 `ros_gz_sim`。
 
 ## 3. 编译
 
@@ -89,14 +89,14 @@ source install/setup.bash
 1. `simulation/worlds/ellipsoid_obstacle_world.sdf`：Gazebo Sim 场景；
 2. `ros_gz_bridge`：深度图、里程计、速度命令和仿真时钟桥接；
 3. `safe_set_generator`：把深度图转成椭圆安全集；
-4. `cbf_controller`：用 CBF-QP 过滤参考速度。
+4. `cbf_controller`：用 CBF-QP 过滤参考速度；
 5. `reference_cmd_publisher`：默认只在自带仿真中发布一段有时长/里程上限的前进参考速度，让你不必另开遥控器就能观察 CBF 过滤效果。
 
 常用启动参数：
 
 ```bash
-./scripts/run_demo.sh gui:=false                       # Gazebo server-only
-./scripts/run_demo.sh auto_demo:=false                # 禁用自动参考速度，改用键盘/导航栈
+./scripts/run_demo.sh gui:=false                         # Gazebo server-only
+./scripts/run_demo.sh auto_demo:=false                   # 禁用自动参考速度，改用键盘/导航栈
 ./scripts/run_demo.sh start_simulation:=false auto_demo:=false # 连接你已运行的 Gazebo
 ```
 
@@ -225,7 +225,7 @@ python3 scripts/analyze_run.py results/run_01.csv
 ## 9. 目录结构
 
 ```text
-safe-obstacle-avoidance-ros2/
+cbf/
 ├── src/
 │   ├── safe_obstacle_avoidance_msgs/   # rosidl 自定义消息
 │   └── safe_obstacle_avoidance/        # rclpy 算法包
@@ -241,7 +241,6 @@ safe-obstacle-avoidance-ros2/
 ├── scripts/                            # 安装、构建、启动、实验重复、记录、分析
 ├── docs/                               # 架构、算法、路线图与复现实验说明
 ├── tests/                              # Python + SDF/XML/YAML 静态测试
-├── .github/workflows/                  # GitHub Actions 静态检查
 └── results/                            # 用户实测结果输出目录
 ```
 
