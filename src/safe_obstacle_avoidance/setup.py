@@ -15,7 +15,7 @@ setup(
         ("share/" + package_name, ["package.xml"]),
         (os.path.join("share", package_name, "worlds"), WORLD_FILES),
         (os.path.join("share", package_name, "launch"), glob("launch/*.launch.py")),
-        (os.path.join("share", package_name, "config"), glob("config/*.yaml")),
+        (os.path.join("share", package_name, "config"), glob("config/*.yaml") + glob("config/*.rviz")),
     ],
     install_requires=["setuptools", "numpy"],
     zip_safe=True,
@@ -28,6 +28,7 @@ setup(
             "safe_set_generator = safe_obstacle_avoidance.safe_set_generator:main",
             "cbf_controller = safe_obstacle_avoidance.cbf_controller:main",
             "reference_cmd_publisher = safe_obstacle_avoidance.reference_cmd_publisher:main",
+            "cbf_visualization = safe_obstacle_avoidance.visualization_markers:main",
         ],
     },
 )
