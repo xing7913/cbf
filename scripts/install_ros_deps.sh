@@ -14,6 +14,7 @@ sudo apt install -y \
   python3-opencv \
   ros-lyrical-cv-bridge \
   ros-lyrical-ros-gz-bridge \
+  ros-lyrical-rviz2 \
   ros-lyrical-teleop-twist-keyboard \
   python3-matplotlib
 
@@ -22,5 +23,5 @@ if [[ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]]; then
 fi
 rosdep update
 
-# Installs only the ROS bridge package, not ros_gz_sim or the Gazebo simulator.
-echo "ROS dependencies installed. Gazebo itself was intentionally left untouched."
+# Installs only ROS-side packages; Gazebo itself is intentionally untouched.
+echo "ROS dependencies installed (including RViz2). Gazebo itself was not installed or changed."
