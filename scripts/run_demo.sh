@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+# ROS setup scripts may reference unset variables; source before enabling nounset.
+source /opt/ros/lyrical/setup.bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-source /opt/ros/lyrical/setup.bash
 if ! command -v gz >/dev/null 2>&1; then
   echo "Gazebo CLI 'gz' was not found. Install Gazebo separately; this script will not install it." >&2
   exit 2
