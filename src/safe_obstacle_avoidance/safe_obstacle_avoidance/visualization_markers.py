@@ -18,6 +18,9 @@ class CBFVisualization(Node):
         self.declare_parameter("ellipse_segments", 32)
         self.odom = None
         self.safe = None
+        self.trail = []
+        self.declare_parameter("goal_x", 5.5)
+        self.declare_parameter("goal_y", 0.0)
         self.pub = self.create_publisher(MarkerArray, self.get_parameter("marker_topic").value, 10)
         self.create_subscription(Odometry, "/odom", self.on_odom, qos_profile_sensor_data)
         self.create_subscription(SafeSetEllipsoidsConfig, "/safe_set_config", self.on_safe, 10)
@@ -36,6 +39,14 @@ class CBFVisualization(Node):
 
     def on_odom(self,msg):
         self.odom=msg
+        position=msg.pose.pose.position
+        point=Point()
+        point.x, point.y, point.z=float(position.x), float(position.y), 0.045
+        if not self.trail or math.hypot(
+                point.x-self.trail[-1].x, point.y-self.trail[-1].y) > 0.025:
+            self.trail.append(point)
+            if len(self.trail)>2000:
+                self.trail=self.trail[-2000:]
         self.publish()
 
     def on_safe(self,msg):
@@ -62,6 +73,18 @@ class CBFVisualization(Node):
         arrow.scale.x,arrow.scale.y,arrow.scale.z=0.42,0.045,0.045
         arrow.color.r,arrow.color.g,arrow.color.b,arrow.color.a=0.1,0.85,1.0,1.0
         out.markers.append(arrow)
+        track=self.marker(frame,stamp,3,Marker.LINE_STRIP)
+        track.scale.x=0.045
+        track.color.r,track.color.g,track.color.b,track.color.a=1.0,0.78,0.14,1.0
+        track.points=list(self.trail)
+        out.markers.append(track)
+        goal=self.marker(frame,stamp,4,Marker.SPHERE)
+        goal.pose.position.x=float(self.get_parameter("goal_x").value)
+        goal.pose.position.y=float(self.get_parameter("goal_y").value)
+        goal.pose.position.z=0.16
+        goal.scale.x,goal.scale.y,goal.scale.z=0.30,0.30,0.30
+        goal.color.r,goal.color.g,goal.color.b,goal.color.a=0.95,0.12,0.82,1.0
+        out.markers.append(goal)
         # These three markers mirror the fixed obstacle poses in the bundled SDF.
         obstacles=[
           (20,Marker.CYLINDER,1.65,0.0,0.40,0.48,0.48,0.80,0.90,0.18,0.10),
