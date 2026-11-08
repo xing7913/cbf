@@ -31,6 +31,10 @@ jobs:
           test -d /tmp/project/safe-obstacle-avoidance-ros2
           cp -a /tmp/project/safe-obstacle-avoidance-ros2/. .
           rm -rf .upload-parts
+          # The Actions token has contents:write but not workflows:write.
+          # Exclude the additional static-check workflow from this push.
+          rm -f .github/workflows/static-checks.yml
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
       - name: Commit expanded files
         shell: bash
         run: |
