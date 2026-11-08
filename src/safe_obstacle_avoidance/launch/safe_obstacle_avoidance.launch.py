@@ -13,6 +13,7 @@ def generate_launch_description():
     auto_demo = LaunchConfiguration("auto_demo")
     auto_duration_s = LaunchConfiguration("auto_duration_s")
     params_file = LaunchConfiguration("params_file")
+    rviz = LaunchConfiguration("rviz")
     world_file = PathJoinSubstitution([
         FindPackageShare("safe_obstacle_avoidance"), "worlds", "ellipsoid_obstacle_world.sdf"
     ])
@@ -69,6 +70,19 @@ def generate_launch_description():
         parameters=[params_file, {"use_sim_time": True}],
     )
 
+    visualizer = Node(
+        package="safe_obstacle_avoidance",
+        executable="cbf_visualization",
+        name="cbf_visualization",
+        output="screen",
+        parameters=[{"use_sim_time": True}],
+    )
+    rviz_process = ExecuteProcess(
+        cmd=["rviz2", "-d", rviz_config],
+        condition=IfCondition(rviz),
+        output="screen",
+        emulate_tty=True,
+    )
     reference_publisher = Node(
         package="safe_obstacle_avoidance",
         executable="reference_cmd_publisher",
@@ -104,5 +118,5 @@ def generate_launch_description():
         ),
         gazebo_gui,
         gazebo_headless,
-        TimerAction(period=3.0, actions=[bridge, generator, controller, reference_publisher]),
+        TimerAction(period=3.0, actions=[bridge, generator, controller, reference_publisher, visualizer]),\n        TimerAction(period=5.0, actions=[rviz_process]),
     ])
