@@ -12,6 +12,8 @@ def generate_launch_description():
     rviz = LaunchConfiguration("rviz")
     start_simulation = LaunchConfiguration("start_simulation")
     auto_demo = LaunchConfiguration("auto_demo")
+    goal_x = LaunchConfiguration("goal_x")
+    goal_y = LaunchConfiguration("goal_y")
     auto_duration_s = LaunchConfiguration("auto_duration_s")
     params_file = LaunchConfiguration("params_file")
 
@@ -54,6 +56,14 @@ def generate_launch_description():
         name="cbf_controller", output="screen",
         parameters=[params_file, {"use_sim_time": True}],
     )
+    reactive_navigator = Node(
+        package="safe_obstacle_avoidance", executable="reactive_goal_navigator",
+        name="reactive_goal_navigator", output="screen",
+        parameters=[{"use_sim_time": True,
+                     "goal_x": ParameterValue(goal_x, value_type=float),
+                     "goal_y": ParameterValue(goal_y, value_type=float)}],
+        condition=run_auto_demo,
+    )
     reference_publisher = Node(
         package="safe_obstacle_avoidance", executable="reference_cmd_publisher",
         name="demo_reference_cmd_publisher", output="screen",
@@ -64,7 +74,7 @@ def generate_launch_description():
             "duration_s": ParameterValue(auto_duration_s, value_type=float),
             "max_path_length": 5.0,
         }],
-        condition=run_auto_demo,
+        condition=IfCondition("false"),  # retained only for manual backwards-compatibility
     )
     visualizer = Node(
         package="safe_obstacle_avoidance", executable="cbf_visualization",
@@ -85,6 +95,8 @@ def generate_launch_description():
                               description="Launch the bundled Gazebo world"),
         DeclareLaunchArgument("auto_demo", default_value="true",
                               description="Publish a bounded forward reference command"),
+        DeclareLaunchArgument("goal_x", default_value="5.5", description="Demo goal x in odom frame"),
+        DeclareLaunchArgument("goal_y", default_value="0.0", description="Demo goal y in odom frame"),
         DeclareLaunchArgument("auto_duration_s", default_value="30.0",
                               description="Maximum simulated seconds for the automatic command"),
         DeclareLaunchArgument("params_file", default_value=default_params,
@@ -92,7 +104,7 @@ def generate_launch_description():
         gazebo_gui,
         gazebo_headless,
         TimerAction(period=3.0, actions=[
-            bridge, generator, controller, reference_publisher, visualizer
+            bridge, generator, controller, reactive_navigator, visualizer
         ]),
         TimerAction(period=5.0, actions=[rviz_process]),
     ])
