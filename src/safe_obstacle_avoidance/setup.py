@@ -1,9 +1,7 @@
 from glob import glob
-import os
 from setuptools import find_packages, setup
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-WORLD_FILES = glob(os.path.join(ROOT, "simulation", "worlds", "*.sdf"))
+WORLD_FILES = glob("worlds/*.sdf")
 
 package_name = "safe_obstacle_avoidance"
 
