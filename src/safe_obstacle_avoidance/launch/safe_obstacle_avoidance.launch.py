@@ -72,7 +72,7 @@ def generate_launch_description():
         parameters=[{"use_sim_time": True}],
     )
     rviz_process = ExecuteProcess(
-        cmd=["rviz2", "-d", rviz_config],
+        cmd=["rviz2", "-d", rviz_config, "--ros-args", "-p", "use_sim_time:=true"],
         condition=IfCondition(rviz), output="screen", emulate_tty=True,
     )
 
