@@ -29,6 +29,7 @@ setup(
             "cbf_controller = safe_obstacle_avoidance.cbf_controller:main",
             "reference_cmd_publisher = safe_obstacle_avoidance.reference_cmd_publisher:main",
             "cbf_visualization = safe_obstacle_avoidance.visualization_markers:main",
+            "reactive_goal_navigator = safe_obstacle_avoidance.reactive_goal_navigator:main",
         ],
     },
 )
