@@ -1,0 +1,44 @@
+safe_set_generator:
+  ros__parameters:
+    depth_topic: /camera/depth/image_raw
+    odom_topic: /odom
+    safe_set_topic: /safe_set_config
+    theta_min_deg: 30.0
+    theta_max_deg: 150.0
+    min_depth: 0.20
+    max_depth: 5.0
+    r_max_ellipse: 5.0
+    depth_val_outside_fov: 0.8
+    ellipse_buffer: 0.20
+    ellipse_semi_minor: 0.15
+    num_ellipses: 200
+    # Center row avoids sampling the ground in this level-mounted demo camera.
+    depth_row_fraction: 0.50
+    camera_offset_x: 0.13
+    camera_offset_y: 0.0
+    # The bundled simulation uses a REP-103-aligned base: +X is forward.
+    yaw_offset: 0.0
+
+cbf_controller:
+  ros__parameters:
+    odom_topic: /odom
+    safe_set_topic: /safe_set_config
+    reference_topic: /ref_vel
+    cmd_vel_topic: /cmd_vel
+    control_rate: 20.0
+    safe_set_timeout: 0.5
+    odom_timeout: 0.5
+    reference_timeout: 0.5
+    gamma: 0.1
+    q_linear: 100.0
+    q_angular: 1.0
+    linear_min: -0.26
+    linear_max: 0.26
+    angular_min: -1.82
+    angular_max: 1.82
+    robot_offset_l: -0.08
+    yaw_offset: 0.0
+    # Positive ROS linear.x maps to forward motion for the bundled base.
+    linear_velocity_sign: 1.0
+    angular_velocity_sign: 1.0
+    penetration_tolerance: 0.001

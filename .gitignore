@@ -1,0 +1,11 @@
+/build/
+/install/
+/log/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.csv
+*.metrics.json
+*.trajectory.png
+!results/README.md
+results/*.log
