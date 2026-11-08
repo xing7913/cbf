@@ -1,4 +1,5 @@
 from glob import glob
+import os
 from setuptools import find_packages, setup
 
 WORLD_FILES = glob("worlds/*.sdf")
