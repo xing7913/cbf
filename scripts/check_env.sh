@@ -36,7 +36,7 @@ else
   err "Gazebo CLI 'gz' not found. Install Gazebo separately; this project will not install it."
 fi
 
-for pkg in rclpy cv_bridge sensor_msgs nav_msgs geometry_msgs ros_gz_bridge launch launch_ros safe_obstacle_avoidance_msgs; do
+for pkg in rclpy cv_bridge sensor_msgs nav_msgs geometry_msgs ros_gz_bridge rviz2 visualization_msgs launch launch_ros safe_obstacle_avoidance_msgs; do
   if ros2 pkg prefix "$pkg" >/dev/null 2>&1; then
     ok "ROS package available: $pkg"
   else
