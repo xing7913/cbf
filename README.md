@@ -27,6 +27,36 @@
 
 ---
 
+## 主动绕障升级（实验版）
+
+现在默认 `auto_demo:=true` 不再只发直线速度，而是启动 `reactive_goal_navigator`：
+它订阅 `/camera/depth/image_raw` 和 `/odom`，把目标方向与深度图左、中、右扇区的可通行距离合成为 `/ref_vel`。遇到前方障碍时优先转向较空旷的一侧；数据丢失或到达目标时发零速度。**`cbf_controller` 仍是唯一发布 `/cmd_vel` 的节点。** 算法是演示用局部反应式导航，不是全局路径规划，不能保证在复杂场景一定绕过障碍或抵达终点。
+
+```bash
+cd ~/ros2_lyrical/cbf
+git pull origin main
+source /opt/ros/lyrical/setup.bash
+colcon build --symlink-install --packages-select safe_obstacle_avoidance
+source install/setup.bash
+./scripts/run_demo.sh gui:=false rviz:=true goal_x:=5.5 goal_y:=0.0
+```
+
+RViz2 中新增**黄色轨迹线**与**粉色目标点**，蓝色 Marker 是机器人。可通过 `goal_x` / `goal_y` 改目标的 odom 坐标，例如：
+
+```bash
+./scripts/run_demo.sh gui:=false rviz:=true goal_x:=4.5 goal_y:=1.0
+```
+
+使用键盘时设 `auto_demo:=false`，避免两个节点同时发布 `/ref_vel`：
+
+```bash
+./scripts/run_demo.sh gui:=false rviz:=true auto_demo:=false
+```
+
+> 旧的 `auto_duration_s` 是原限时直线演示参数，已不再用于新的目标导航模式。若希望停止演示，请按 Ctrl+C；如果遇到障碍后原地旋转、停滞或 CBF 报安全约束不可行，请检查 `/ref_vel` 和 `/cmd_vel` 的线速度、角速度及 `cbf_controller` 日志，不能通过禁用 CBF 来宣称避障成功。当前 CI 仅覆盖纯 Python 行为及静态资源检查，Gazebo 端到端避障效果仍需在你的虚拟机上实测。
+
+---
+
 ## 1. 环境要求
 
 | 项目 | 目标环境 |
